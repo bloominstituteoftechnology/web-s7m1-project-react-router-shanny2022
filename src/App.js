@@ -1,36 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Route } from 'react-router-dom';
+import MovieList from './MovieList';
+import Movie from './Movie';
+import SavedList from './SavedList';
 
-import SavedList from './Movies/SavedList';
+const movies = [
+  {
+    id: 1,
+    title: 'The Godfather',
+    director: 'Francis Ford Coppola',
+    metascore: 100,
+    stars: ['Marlon Brando', 'Al Pacino', 'Robert Duvall'],
+    // Add other movies here...
+  },
+  // ...
+];
 
-export default function App () {
-  const [saved, setSaved] = useState([]); // Stretch: the ids of "saved" movies
-  const [movies, setMovies] = useState([]);
+function App() {
+  const [savedMovies, setSavedMovies] = useState([]);
 
-  useEffect(() => {
-    const getMovies = () => {
-      axios
-        .get('http://localhost:5001/api/movies') // Study this endpoint with Postman
-        .then(response => {
-          // Study this response with a breakpoint or log statements
-          // and set the response data as the 'movies' slice of state
-        })
-        .catch(error => {
-          console.error('Server Error', error);
-        });
-    }
-    getMovies();
-  }, []);
-
-  const addToSavedList = id => {
-    // This is stretch. Prevent the same movie from being "saved" more than once
+  const addToSavedList = movie => {
+    setSavedMovies([...savedMovies, movie]);
   };
 
   return (
-    <div>
-      <SavedList list={[ /* This is stretch */]} />
-
-      <div>Replace this Div with your Routes</div>
+    <div className="App">
+      <SavedList list={savedMovies} />
+      <Route exact path="/" render={() => <MovieList movies={movies} />} />
+      <Route path="/movies/:id" render={props => <Movie {...props} addToSavedList={addToSavedList} movies={movies} />} />
     </div>
   );
 }
+
+export default App;
